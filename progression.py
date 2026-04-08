@@ -81,21 +81,33 @@ def get_student_history(conn, student_name):
         """, (hash(student_name) % 10000,))
         return cur.fetchall()
 
+# Drop if failed
+def drop_back(conn, skill, steps=2):
+    current = skill
+    for _ in range(steps):
+        prev_code = current["prev"]
+        # If at the start, stop
+        if not prev_code or prev_code == current["code"]:
+            return current
+        prev_skill = get_skill_set(conn, prev_code)
+        if not prev_skill:
+            return current
+        current = prev_skill
+    return current
 
 # Progression logic
 def progress(skill, passed, conn):
     if passed:
         next_code = skill["next"]
-        # Terminal node (at highest level)
+        # Terminal node
         if next_code == skill["code"]:
             return None, "top"
         return get_skill_set(conn, next_code), "advance"
     else:
-        prev_code = skill["prev"]
-        # Already at the bottom
-        if prev_code == skill["code"]:
+        dropped = drop_back(conn, skill, steps=2)
+        if dropped["code"] == skill["code"]:
             return skill, "remediate_same"
-        return get_skill_set(conn, prev_code), "remediate"
+        return dropped, "remediate"
 
 
 # Display 
@@ -138,7 +150,7 @@ def run_demo():
 
     print_divider()
     print("  INTERVENTIVE LEARNING DEMO")
-    print("  (Type scores to simulate student performance)")
+    print("  (Student score)")
     print_divider()
 
     student_name = input("\nEnter student name: ")
