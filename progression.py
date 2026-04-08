@@ -171,7 +171,7 @@ def run_demo():
             continue
 
         # Determine pass/fail
-        passed = score >= 0.80
+        passed = score >= 0.70
 
         print(f"\n  Result: {'PASSED' if passed else 'FAILED'}")
 

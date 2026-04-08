@@ -1,5 +1,5 @@
 # interventive-learning
-Interventive Learning Reading Database
+Interventive Learning: Reading 
 WMU Senior Design
 
 Each skill set has:
