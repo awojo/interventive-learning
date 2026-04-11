@@ -110,7 +110,6 @@ ON CONFLICT (proficiency_code) DO NOTHING;
 
 -- Kindergarten start nodes self-reference prev.
 -- Grade 5 end nodes self-reference next.
--- 2.RSLIKI.8 excluded — RL.2.8 is not applicable to literature.
 
 -- RSL — Reading: Literature
 INSERT INTO skill_sets (skill_set_code, prev_skill_set_code, next_skill_set_code, proficiency_id, description) VALUES

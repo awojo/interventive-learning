@@ -2,7 +2,7 @@ BEGIN;
 
 -- ASSESSMENT: 4.RSLKID.1
 INSERT INTO assessments (name, skill_set_code, item_code, sequence_index, passing_score)
-SELECT 'Explicit Details and Inferences Assessment', '4.RSLKID.1', '4.RSLKID.1.A', 20, 0.8
+SELECT 'Explicit Details and Inferences Assessment', '4.RSLKID.1', '4.RSLKID.1.A', 20, 0.7
 WHERE NOT EXISTS (SELECT 1 FROM assessments WHERE item_code = '4.RSLKID.1.A');
 
 DO $$
@@ -24,7 +24,7 @@ END $$;
 
 -- ASSESSMENT: 5.RSLKID.1
 INSERT INTO assessments (name, skill_set_code, item_code, sequence_index, passing_score)
-SELECT 'Accurate Quoting and Inference Assessment', '5.RSLKID.1', '5.RSLKID.1.A', 20, 0.8
+SELECT 'Accurate Quoting and Inference Assessment', '5.RSLKID.1', '5.RSLKID.1.A', 20, 0.7
 WHERE NOT EXISTS (SELECT 1 FROM assessments WHERE item_code = '5.RSLKID.1.A');
 
 DO $$
