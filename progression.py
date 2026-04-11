@@ -1,14 +1,15 @@
 import psycopg2
 from datetime import datetime, timezone
 
-# Database connection 
+# Database connection
 DB = {
-    "host":     "localhost",
-    "port":     5433,
-    "dbname":   "wmu_reading",
-    "user":     "wmuuser",
-    "password": "wmupassword"
+    "host": "localhost",
+    "port": 5433,
+    "dbname": "wmu_reading",
+    "user": "wmuuser",
+    "password": "wmupassword",
 }
+
 
 def connect():
     return psycopg2.connect(**DB)
@@ -17,68 +18,82 @@ def connect():
 # Database access
 def get_skill_set(conn, code):
     with conn.cursor() as cur:
-        cur.execute("""
+        cur.execute(
+            """
             SELECT skill_set_code, prev_skill_set_code, next_skill_set_code, description
             FROM skill_sets WHERE skill_set_code = %s
-        """, (code,))
+        """,
+            (code,),
+        )
         row = cur.fetchone()
         if not row:
             return None
-        return {
-            "code":  row[0],
-            "prev":  row[1],
-            "next":  row[2],
-            "desc":  row[3]
-        }
+        return {"code": row[0], "prev": row[1], "next": row[2], "desc": row[3]}
+
 
 def get_module(conn, skill_code):
     with conn.cursor() as cur:
-        cur.execute("""
+        cur.execute(
+            """
             SELECT m.name, COUNT(ms.module_statements_id) as stmt_count
             FROM modules m
             LEFT JOIN module_statements ms ON ms.module_id = m.id
             WHERE m.skill_set_code = %s
             GROUP BY m.name
-        """, (skill_code,))
+        """,
+            (skill_code,),
+        )
         return cur.fetchone()
+
 
 def get_assessment(conn, skill_code):
     with conn.cursor() as cur:
-        cur.execute("""
+        cur.execute(
+            """
             SELECT a.name, COUNT(aq.assessment_questions_id) as q_count
             FROM assessments a
             LEFT JOIN assessment_questions aq ON aq.assessment_id = a.id
             WHERE a.skill_set_code = %s
             GROUP BY a.name
-        """, (skill_code,))
+        """,
+            (skill_code,),
+        )
         return cur.fetchone()
+
 
 def record_result(conn, student_name, skill_code, score, passed):
     with conn.cursor() as cur:
-        cur.execute("""
+        cur.execute(
+            """
             INSERT INTO assignment_results
             (student_id, assignment_code, skill_set_code, assignment_type, score, proficient, completed_at)
             VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """, (
-            hash(student_name) % 10000,
-            f"{skill_code}.A",
-            skill_code,
-            "ASSESSMENT",
-            score,
-            passed,
-            datetime.now(timezone.utc)
-        ))
+        """,
+            (
+                hash(student_name) % 10000,
+                f"{skill_code}.A",
+                skill_code,
+                "ASSESSMENT",
+                score,
+                passed,
+                datetime.now(timezone.utc),
+            ),
+        )
         conn.commit()
+
 
 def get_student_history(conn, student_name):
     with conn.cursor() as cur:
-        cur.execute("""
+        cur.execute(
+            """
             SELECT skill_set_code, score, proficient, completed_at
             FROM assignment_results
             WHERE student_id = %s
             ORDER BY completed_at DESC
             LIMIT 10
-        """, (hash(student_name) % 10000,))
+        """,
+            (hash(student_name) % 10000,),
+        )
         return cur.fetchall()
 
 
@@ -98,9 +113,10 @@ def progress(skill, passed, conn):
         return get_skill_set(conn, prev_code), "remediate"
 
 
-# Display 
+# Display
 def print_divider():
     print("\n" + "=" * 60)
+
 
 def print_skill(skill, conn):
     module = get_module(conn, skill["code"])
@@ -110,7 +126,9 @@ def print_skill(skill, conn):
 
     print(f"\n  Skill Set : {skill['code']}")
     print(f"  Grade     : {grade_label}")
-    print(f"  Standard  : {skill['desc'][:80]}{'...' if len(skill['desc']) > 80 else ''}")
+    print(
+        f"  Standard  : {skill['desc'][:80]}{'...' if len(skill['desc']) > 80 else ''}"
+    )
     if module:
         print(f"  Module    : {module[0]} ({module[1]} statements)")
     else:
@@ -119,6 +137,7 @@ def print_skill(skill, conn):
         print(f"  Assessment: {assessment[0]} ({assessment[1]} questions)")
     else:
         print(f"  Assessment: Not yet available")
+
 
 def print_history(conn, student_name):
     history = get_student_history(conn, student_name)
@@ -129,7 +148,9 @@ def print_history(conn, student_name):
     print(f"  {'-'*20} {'-'*6}  {'-'*12} {'-'*20}")
     for skill_code, score, proficient, ts in history:
         result = "PASSED" if proficient else "FAILED"
-        print(f"  {skill_code:<20} {score*100:>5.0f}%  {result:<12} {ts.strftime('%H:%M:%S')}")
+        print(
+            f"  {skill_code:<20} {score*100:>5.0f}%  {result:<12} {ts.strftime('%H:%M:%S')}"
+        )
 
 
 # Main demo
@@ -161,7 +182,7 @@ def run_demo():
         try:
             score_input = input("\nEnter score (0–100) or 'q' to quit: ")
 
-            if score_input.lower() == 'q':
+            if score_input.lower() == "q":
                 break
 
             score = min(float(score_input), 100) / 100
