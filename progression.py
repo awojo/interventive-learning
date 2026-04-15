@@ -11,7 +11,6 @@ DB = {
     "password": "wmupassword",
 }
 
-
 def connect():
     return psycopg2.connect(**DB)
 
@@ -29,21 +28,12 @@ def get_skill_set(conn, code):
         if not row:
             return None
         return {"code": row[0], "prev": row[1], "next": row[2], "desc": row[3]}
-<<<<<<< HEAD
-
 
 def get_module(conn, skill_code):
     with conn.cursor() as cur:
         cur.execute(
             """
-            SELECT m.name, COUNT(ms.module_statements_id) as stmt_count
-=======
-
-def get_module(conn, skill_code):
-    with conn.cursor() as cur:
-        cur.execute("""
             SELECT m.name, COUNT(ms.module_statements_id)
->>>>>>> 1c993dd3abf105e78acdab8896948f6cbd1434e6
             FROM modules m
             LEFT JOIN module_statements ms ON ms.module_id = m.id
             WHERE m.skill_set_code = %s
@@ -53,19 +43,11 @@ def get_module(conn, skill_code):
         )
         return cur.fetchone()
 
-<<<<<<< HEAD
-
-def get_assessment(conn, skill_code):
+def get_assessment_info(conn, skill_code):
     with conn.cursor() as cur:
         cur.execute(
             """
-            SELECT a.name, COUNT(aq.assessment_questions_id) as q_count
-=======
-def get_assessment_info(conn, skill_code):
-    with conn.cursor() as cur:
-        cur.execute("""
             SELECT a.name, COUNT(aq.assessment_questions_id)
->>>>>>> 1c993dd3abf105e78acdab8896948f6cbd1434e6
             FROM assessments a
             LEFT JOIN assessment_questions aq ON aq.assessment_id = a.id
             WHERE a.skill_set_code = %s
@@ -74,7 +56,6 @@ def get_assessment_info(conn, skill_code):
             (skill_code,),
         )
         return cur.fetchone()
-
 
 def record_result(conn, student_name, skill_code, score, passed):
     with conn.cursor() as cur:
@@ -96,7 +77,6 @@ def record_result(conn, student_name, skill_code, score, passed):
         )
         conn.commit()
 
-
 def get_student_history(conn, student_name):
     with conn.cursor() as cur:
         cur.execute(
@@ -111,7 +91,7 @@ def get_student_history(conn, student_name):
         )
         return cur.fetchall()
 
-# Progression logic — drop back 2 prereq levels on fail
+# Progression logic 
 def drop_back(conn, skill, steps=2):
     current = skill
     for _ in range(steps):
@@ -136,13 +116,6 @@ def progress(skill, passed, conn):
             return skill, "remediate_same"
         return dropped, "remediate"
 
-<<<<<<< HEAD
-
-# Display
-def print_divider():
-    print("\n" + "=" * 60)
-
-=======
 # Display helpers
 def print_divider():
     print("\n" + "=" * 60)
@@ -150,32 +123,26 @@ def print_divider():
 def grade_label(code):
     grade = code.split(".")[0]
     return "Kindergarten" if grade == "K" else f"Grade {grade}"
->>>>>>> 1c993dd3abf105e78acdab8896948f6cbd1434e6
 
 def print_skill(skill, conn):
     module = get_module(conn, skill["code"])
     assessment = get_assessment_info(conn, skill["code"])
 
     print(f"\n  Skill Set : {skill['code']}")
-<<<<<<< HEAD
-    print(f"  Grade     : {grade_label}")
+    print(f"  Grade     : {grade_label(skill['code'])}")
     print(
         f"  Standard  : {skill['desc'][:80]}{'...' if len(skill['desc']) > 80 else ''}"
     )
+
     if module:
         print(f"  Module    : {module[0]} ({module[1]} statements)")
     else:
         print(f"  Module    : Not yet available")
+
     if assessment:
         print(f"  Assessment: {assessment[0]} ({assessment[1]} questions)")
     else:
         print(f"  Assessment: Not yet available")
-=======
-    print(f"  Grade     : {grade_label(skill['code'])}")
-    print(f"  Standard  : {skill['desc'][:80]}{'...' if len(skill['desc']) > 80 else ''}")
-    print(f"  Module    : {module[0] + ' (' + str(module[1]) + ' statements)' if module else 'Not yet available'}")
-    print(f"  Assessment: {assessment[0] + ' (' + str(assessment[1]) + ' questions)' if assessment else 'Not yet available'}")
->>>>>>> 1c993dd3abf105e78acdab8896948f6cbd1434e6
 
 
 def print_history(conn, student_name):
@@ -183,28 +150,31 @@ def print_history(conn, student_name):
     if not history:
         print("  No history yet.")
         return
+
     print(f"\n  {'Skill Set':<20} {'Score':>6}  {'Result':<8} {'Time'}")
     print(f"  {'-'*20} {'-'*6}  {'-'*8} {'-'*10}")
+
     for skill_code, score, proficient, ts in history:
         result = "PASSED" if proficient else "FAILED"
-<<<<<<< HEAD
         print(
-            f"  {skill_code:<20} {score*100:>5.0f}%  {result:<12} {ts.strftime('%H:%M:%S')}"
+            f"  {skill_code:<20} {score*100:>5.0f}%  {result:<8} {ts.strftime('%H:%M:%S')}"
         )
-=======
-        print(f"  {skill_code:<20} {score*100:>5.0f}%  {result:<8} {ts.strftime('%H:%M:%S')}")
->>>>>>> 1c993dd3abf105e78acdab8896948f6cbd1434e6
 
 # Main loop
 def run_demo():
     conn = connect()
+
+    def debug_db(conn):
+        with conn.cursor() as cur:
+            cur.execute("SELECT current_database(), inet_server_addr(), inet_server_port();")
+            print(cur.fetchone())
 
     print_divider()
     print("INTERVENTIVE LEARNING READING")
     print_divider()
 
     student_name = input("\n  Enter student name: ").strip()
-    start_code   = input("  Enter starting skill set (e.g., 4.RSLKID.1): ").strip()
+    start_code = input("  Enter starting skill set (e.g., 4.RSLKID.1): ").strip()
 
     current = get_skill_set(conn, start_code)
     if not current:
@@ -221,22 +191,17 @@ def run_demo():
         # Run the real assessment
         score = run_assessment(conn, current["code"])
 
-<<<<<<< HEAD
-            if score_input.lower() == "q":
-                break
-=======
         # If no assessment available
         if score is None:
             print("\n  No assessment for this level yet.")
             try:
                 manual = input("  Enter score manually (0-100) or 'q' to quit: ").strip()
-                if manual.lower() == 'q':
+                if manual.lower() == "q":
                     break
                 score = min(float(manual), 100) / 100
             except:
                 print("  Invalid input.")
                 continue
->>>>>>> 1c993dd3abf105e78acdab8896948f6cbd1434e6
 
         passed = score >= 0.70
 
@@ -251,7 +216,7 @@ def run_demo():
         next_skill, action = progress(current, passed, conn)
 
         if action == "advance":
-            print(f"\n  ADVANCING  →  {next_skill['code']} ({grade_label(next_skill['code'])})")
+            print(f"\n  ADVANCING: {next_skill['code']} ({grade_label(next_skill['code'])})")
             current = next_skill
 
         elif action == "top":
@@ -259,14 +224,14 @@ def run_demo():
             break
 
         elif action == "remediate":
-            print(f"\n  DROPPING BACK  →  {next_skill['code']} ({grade_label(next_skill['code'])})")
+            print(f"\n  DROPPING BACK: {next_skill['code']} ({grade_label(next_skill['code'])})")
             current = next_skill
 
         elif action == "remediate_same":
             print(f"\n  STAYING AT SAME LEVEL: {current['code']}")
 
         cont = input("\n  Continue? (press Enter to continue, 'q' to quit): ").strip()
-        if cont.lower() == 'q':
+        if cont.lower() == "q":
             break
 
     print_divider()
