@@ -1,47 +1,183 @@
 BEGIN;
 
--- ASSESSMENT: 4.RSLKID.1
+-- KINDERGARTEN
 INSERT INTO assessments (name, skill_set_code, item_code, sequence_index, passing_score)
-SELECT 'Explicit Details and Inferences Assessment', '4.RSLKID.1', '4.RSLKID.1.A', 20, 0.7
-WHERE NOT EXISTS (SELECT 1 FROM assessments WHERE item_code = '4.RSLKID.1.A');
+VALUES ('Kindergarten Reading Assessment', 'K.RSLKID.1', 'K.RSLKID.1.A', 1, 0.7)
+ON CONFLICT (item_code) DO UPDATE
+SET name = EXCLUDED.name;
 
-DO $$
-DECLARE aid BIGINT;
-BEGIN
-  SELECT id INTO aid FROM assessments WHERE item_code = '4.RSLKID.1.A';
-  DELETE FROM assessment_questions WHERE assessment_id = aid;
-  INSERT INTO assessment_questions (assessment_id, question, answer, sequence_index)
-  VALUES (aid, 'What is one detail the author states explicitly about Megan at the beginning of the story?', 'Megan was ten years old; She had just been adopted by Robert and Mary Ann Smith; She felt nervous; She had lived in many homes before', 1);
-  INSERT INTO assessment_questions (assessment_id, question, answer, sequence_index)
-  VALUES (aid, 'Using the sentence ''The puppy was cold, wet, and shaking,'' what can you infer about the puppy?', 'The puppy was lost or abandoned; The puppy needed help; The puppy was suffering from being outside in the cold and wet', 2);
-  INSERT INTO assessment_questions (assessment_id, question, answer, sequence_index)
-  VALUES (aid, 'Complete this sentence using evidence from the story: ''I can infer that Megan feels ___ because the text says ___.''', 'nervous / she had lived in many homes before and wondered if this one would last; worried / she wasn''t sure if this home would be forever', 3);
-  INSERT INTO assessment_questions (assessment_id, question, answer, sequence_index)
-  VALUES (aid, 'How does the text show that Megan starts to feel like she belongs? Use a detail from the story.', 'She whispered to Happy ''You have a forever home now. Just like me''; She finally knew she belonged; She called Mary Ann Mom', 4);
-  INSERT INTO assessment_questions (assessment_id, question, answer, sequence_index)
-  VALUES (aid, 'What is the difference between explicit information and an inference? Give one example of each from the story.', 'Explicit: something stated directly in the text such as Megan was ten years old. Inference: something figured out from clues such as Megan is afraid of being moved because she lived in many homes.', 5);
-END $$;
+WITH a AS (
+    SELECT id FROM assessments WHERE item_code = 'K.RSLKID.1.A'
+)
+DELETE FROM assessment_questions
+WHERE assessment_id = (SELECT id FROM a);
 
--- ASSESSMENT: 5.RSLKID.1
+INSERT INTO assessment_questions (
+    assessment_id,
+    question,
+    answer,
+    sequence_index
+)
+VALUES
+((SELECT id FROM assessments WHERE item_code='K.RSLKID.1.A'),
+'Who did Megan meet? [MCQ: A) Heather | B) Max | C) Miss Bye | D) Happy]', 'Heather', 1),
+((SELECT id FROM assessments WHERE item_code='K.RSLKID.1.A'),
+'[TF] Heather has a puppy named Max.', 'true', 2),
+((SELECT id FROM assessments WHERE item_code='K.RSLKID.1.A'),
+'Where did Megan sit? [MCQ: A) At school | B) On bus | C) At home | D) Park]', 'At school', 3),
+((SELECT id FROM assessments WHERE item_code='K.RSLKID.1.A'),
+'[TF] Did Megan have a good day?', 'true', 4),
+((SELECT id FROM assessments WHERE item_code='K.RSLKID.1.A'),
+'What did Megan say? [MCQ: A) I am tired | B) I made a new friend! | C) I lost my puppy | D) I am sad]', 'I made a new friend!', 5);
+
+-- GRADE 1
 INSERT INTO assessments (name, skill_set_code, item_code, sequence_index, passing_score)
-SELECT 'Accurate Quoting and Inference Assessment', '5.RSLKID.1', '5.RSLKID.1.A', 20, 0.7
-WHERE NOT EXISTS (SELECT 1 FROM assessments WHERE item_code = '5.RSLKID.1.A');
+VALUES ('Grade 1 Reading Assessment', '1.RSLKID.1', '1.RSLKID.1.A', 2, 0.7)
+ON CONFLICT (item_code) DO UPDATE
+SET name = EXCLUDED.name;
 
-DO $$
-DECLARE aid BIGINT;
-BEGIN
-  SELECT id INTO aid FROM assessments WHERE item_code = '5.RSLKID.1.A';
-  DELETE FROM assessment_questions WHERE assessment_id = aid;
-  INSERT INTO assessment_questions (assessment_id, question, answer, sequence_index)
-  VALUES (aid, 'Find a sentence from the story that explicitly tells us how Megan feels at the beginning. Quote it accurately using quotation marks.', '''But still, Megan was nervous. She had lived in many homes before, and she wondered if this one would last.''', 1);
-  INSERT INTO assessment_questions (assessment_id, question, answer, sequence_index)
-  VALUES (aid, 'What is one thing the text explicitly tells us about the puppy when Megan finds him? Quote the text accurately.', '''The puppy was cold, wet, and shaking.''; ''He was very dirty and looked hungry.''', 2);
-  INSERT INTO assessment_questions (assessment_id, question, answer, sequence_index)
-  VALUES (aid, 'Using the quote ''Thank you, Mom,'' what inference can you make about Megan''s feelings toward Mary Ann? Explain your reasoning.', 'Megan is beginning to feel that Mary Ann is her real mother; Megan feels safe and loved; Megan trusts Mary Ann enough to call her Mom', 3);
-  INSERT INTO assessment_questions (assessment_id, question, answer, sequence_index)
-  VALUES (aid, 'Quote the sentence that best shows Megan feels she finally belongs. Then explain why you chose that quote.', '''She finally knew she belonged.''; ''You have a forever home now. Just like me.''', 4);
-  INSERT INTO assessment_questions (assessment_id, question, answer, sequence_index)
-  VALUES (aid, 'What is the difference between quoting explicitly and drawing an inference? Give one example of each from the story.', 'Explicit quote: states something directly written in the text with exact words. Inference: uses a quote as evidence to figure out something the author did not directly state. Examples vary.', 5);
-END $$;
+WITH a AS (
+    SELECT id FROM assessments WHERE item_code = '1.RSLKID.1.A'
+)
+DELETE FROM assessment_questions
+WHERE assessment_id = (SELECT id FROM a);
+
+INSERT INTO assessment_questions (
+    assessment_id,
+    question,
+    answer,
+    sequence_index
+)
+VALUES
+((SELECT id FROM assessments WHERE item_code='1.RSLKID.1.A'),
+'Who did Megan meet on the bus? [MCQ: A) Heather | B) Max | C) Mom | D) Miss Bye]', 'Heather', 1),
+((SELECT id FROM assessments WHERE item_code='1.RSLKID.1.A'),
+'[TF] Heather has a puppy named Max.', 'true', 2),
+((SELECT id FROM assessments WHERE item_code='1.RSLKID.1.A'),
+'Where did they sit together? [MCQ: A) Bus | B) School | C) Home | D) Park]', 'At school', 3),
+((SELECT id FROM assessments WHERE item_code='1.RSLKID.1.A'),
+'[TF] Megan did not have a good day.', 'false', 4),
+((SELECT id FROM assessments WHERE item_code='1.RSLKID.1.A'),
+'What did Megan say at the end? [MCQ: A) I am lost | B) I made a new friend! | C) I am tired | D) I cried]', 'I made a new friend!', 5);
+
+-- GRADE 2
+INSERT INTO assessments (name, skill_set_code, item_code, sequence_index, passing_score)
+VALUES ('Grade 2 Reading Assessment', '2.RSLKID.1', '2.RSLKID.1.A', 3, 0.7)
+ON CONFLICT (item_code) DO UPDATE
+SET name = EXCLUDED.name;
+
+WITH a AS (
+    SELECT id FROM assessments WHERE item_code = '2.RSLKID.1.A'
+)
+DELETE FROM assessment_questions
+WHERE assessment_id = (SELECT id FROM a);
+
+INSERT INTO assessment_questions (
+    assessment_id,
+    question,
+    answer,
+    sequence_index
+)
+VALUES
+((SELECT id FROM assessments WHERE item_code='2.RSLKID.1.A'),
+'Who did Megan meet on the bus? [MCQ: A) Heather | B) Teacher | C) Mom | D) Happy]', 'Heather', 1),
+((SELECT id FROM assessments WHERE item_code='2.RSLKID.1.A'),
+'What is Heather’s puppy’s name? [MCQ: A) Max | B) Happy | C) Buddy | D) Spot]', 'Max', 2),
+((SELECT id FROM assessments WHERE item_code='2.RSLKID.1.A'),
+'[TF] Megan and Heather sat together.', 'true', 3),
+((SELECT id FROM assessments WHERE item_code='2.RSLKID.1.A'),
+'Where did they eat? [MCQ: A) Bus | B) At lunch | C) Home | D) Playground]', 'At lunch', 4),
+((SELECT id FROM assessments WHERE item_code='2.RSLKID.1.A'),
+'[TF] Megan said her day was not good.', 'false', 5);
+
+-- GRADE 3
+INSERT INTO assessments (name, skill_set_code, item_code, sequence_index, passing_score)
+VALUES ('Grade 3 Reading Assessment', '3.RSLKID.1', '3.RSLKID.1.A', 4, 0.7)
+ON CONFLICT (item_code) DO UPDATE
+SET name = EXCLUDED.name;
+
+WITH a AS (
+    SELECT id FROM assessments WHERE item_code = '3.RSLKID.1.A'
+)
+DELETE FROM assessment_questions
+WHERE assessment_id = (SELECT id FROM a);
+
+INSERT INTO assessment_questions (
+    assessment_id,
+    question,
+    answer,
+    sequence_index
+)
+VALUES
+((SELECT id FROM assessments WHERE item_code='3.RSLKID.1.A'),
+'Who did Megan meet on the bus? [MCQ: A) Heather | B) Miss Bye | C) Mom | D) Happy]', 'Heather', 1),
+((SELECT id FROM assessments WHERE item_code='3.RSLKID.1.A'),
+'[TF] Megan and Heather both have puppies.', 'true', 2),
+((SELECT id FROM assessments WHERE item_code='3.RSLKID.1.A'),
+'What is Megan’s puppy’s name? [MCQ: A) Max | B) Buddy | C) Happy | D) Spot]', 'Happy', 3),
+((SELECT id FROM assessments WHERE item_code='3.RSLKID.1.A'),
+'[TF] Megan did not like her teacher.', 'false', 4),
+((SELECT id FROM assessments WHERE item_code='3.RSLKID.1.A'),
+'What did Megan say? [MCQ: A) It was boring | B) It was scary | C) It was the best first day ever! | D) I am sad]', 'It was the best first day ever!', 5);
+
+-- GRADE 4
+INSERT INTO assessments (name, skill_set_code, item_code, sequence_index, passing_score)
+VALUES ('Grade 4 Inference Assessment', '4.RSLKID.1', '4.RSLKID.1.A', 5, 0.7)
+ON CONFLICT (item_code) DO UPDATE
+SET name = EXCLUDED.name;
+
+WITH a AS (
+    SELECT id FROM assessments WHERE item_code = '4.RSLKID.1.A'
+)
+DELETE FROM assessment_questions
+WHERE assessment_id = (SELECT id FROM a);
+
+INSERT INTO assessment_questions (
+    assessment_id,
+    question,
+    answer,
+    sequence_index
+)
+VALUES
+((SELECT id FROM assessments WHERE item_code='4.RSLKID.1.A'),
+'Which detail shows Megan was nervous? [MCQ: A) Smiling | B) Butterflies in her stomach | C) Singing | D) Laughing]', 'Butterflies in her stomach', 1),
+((SELECT id FROM assessments WHERE item_code='4.RSLKID.1.A'),
+'[TF] Megan and Heather met for the first time at school.', 'false', 2),
+((SELECT id FROM assessments WHERE item_code='4.RSLKID.1.A'),
+'What can you infer? [MCQ: A) They hate each other | B) They become friends quickly | C) They ignore each other | D) They fight]', 'They quickly become friends', 3),
+((SELECT id FROM assessments WHERE item_code='4.RSLKID.1.A'),
+'[TF] Megan enjoyed her first day.', 'true', 4),
+((SELECT id FROM assessments WHERE item_code='4.RSLKID.1.A'),
+'Which detail shows happiness? [MCQ: A) Crying | B) Running away | C) She smiled all the way | D) Sleeping]', 'She smiled all the way', 5);
+
+-- GRADE 5
+INSERT INTO assessments (name, skill_set_code, item_code, sequence_index, passing_score)
+VALUES ('Grade 5 Quote & Inference Assessment', '5.RSLKID.1', '5.RSLKID.1.A', 6, 0.7)
+ON CONFLICT (item_code) DO UPDATE
+SET name = EXCLUDED.name;
+
+WITH a AS (
+    SELECT id FROM assessments WHERE item_code = '5.RSLKID.1.A'
+)
+DELETE FROM assessment_questions
+WHERE assessment_id = (SELECT id FROM a);
+
+INSERT INTO assessment_questions (
+    assessment_id,
+    question,
+    answer,
+    sequence_index
+)
+VALUES
+((SELECT id FROM assessments WHERE item_code='5.RSLKID.1.A'),
+'Which quote shows nervous + excited? [MCQ: A) Bus was loud | B) She held backpack tightly | C) She smiled | D) She sang]', 'She felt both nervous and excited.', 1),
+((SELECT id FROM assessments WHERE item_code='5.RSLKID.1.A'),
+'[TF] Megan was worried she would not make friends.', 'true', 2),
+((SELECT id FROM assessments WHERE item_code='5.RSLKID.1.A'),
+'What can you infer? [MCQ: A) She is shy | B) She is outgoing | C) She is mean | D) She is angry]', 'She is kind and outgoing.', 3),
+((SELECT id FROM assessments WHERE item_code='5.RSLKID.1.A'),
+'[TF] Megan did not enjoy her first day.', 'false', 4),
+((SELECT id FROM assessments WHERE item_code='5.RSLKID.1.A'),
+'Which shows friendship? [MCQ: A) They fought | B) They ignored each other | C) They shared snacks and talked | D) They left early]', 'They shared snacks and talked about their families.', 5);
 
 COMMIT;
