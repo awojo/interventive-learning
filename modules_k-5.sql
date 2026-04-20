@@ -31,33 +31,6 @@ CREATE TABLE modules (
   created_at timestamp default now()
 );
 
-create table responses (
-    response_id INT AUTO_INCREMENT PRIMARY KEY,
-    student_id INT NOT NULL,
-    FOREIGN KEY (student_id) REFERENCES student (student_id),
-    answer_text text,
-    created_at timestamp default now(),
-    updated_at timestamp default now()
-);
-
-create table scores (
-    score_id INT AUTO_INCREMENT PRIMARY KEY,
-    response_id INT NOT NULL,
-    FOREIGN KEY (response_id) REFERENCES responses (reference_id),
-    rubric_level int,
-    teacher_feedback text,
-    ai_score int,
-    ai_feedback text,
-    created_at timestamp default now()
-);
-
-CREATE TABLE answer_guide (
-    answer_id INT AUTO_INCREMENT PRIMARY KEY,
-    question_id INT NOT NULL,
-    teacher_notes TEXT,
-    FOREIGN KEY (question_id) REFERENCES questions (question_id)
-);
-
 -- tentative (not sure if we'll need this...)
 create table students (
     student_id uuid PRIMARY KEY DEFAULT gen_random_uuid (),

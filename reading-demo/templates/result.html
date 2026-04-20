@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Result</title>
+
+  <style>
+    body {
+    font-family: Arial, sans-serif;
+    background: #f5f6fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+
+  .card {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    text-align: center;
+    width: 400px;
+  }
+
+  h2 {
+    margin-bottom: 1rem;
+  }
+
+  .score {
+    font-size: 1.5rem;
+    margin: 1rem 0;
+    color: #2c7be5;
+  }
+
+  button {
+    background: #2c7be5;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  button:hover {
+    opacity: 0.9;
+  }
+  </style>
+</head>
+
+<body>
+
+<div class="card">
+  <h2>Result</h2>
+
+<p>{{ student }}</p>
+<p>Score: {{ correct }} / {{ total }}</p>
+<p>
+  {% if passed %}
+    Passed
+  {% else %}
+    Failed
+  {% endif %}
+</p>
+
+<h3>Progression</h3>
+
+<p>
+  Current: {{ grade }} ({{ code }})
+</p>
+
+{% if next_code %}
+  <p>Next: {{ next_grade }} ({{ next_code }})</p>
+{% else %}
+  <p>Top level reached</p>
+{% endif %}
+
+<br>
+
+<a href="/next">Continue</a><br><br>
+<a href="/restart">New Student</a>
+</div>
+</body>
+</html>
