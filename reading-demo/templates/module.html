@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module</title>
+
+  <style>
+    body {
+    font-family: Arial, sans-serif;
+    background: #f5f6fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+
+  .card {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    text-align: center;
+    width: 400px;
+  }
+
+  h2 {
+    margin-bottom: 1rem;
+  }
+
+  button {
+    background: #2c7be5;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 1rem;
+  }
+
+  button:hover {
+    opacity: 0.9;
+  }
+  </style>
+</head>
+<body>
+<div class="card">
+  <h2>{{ skill.code }}</h2>
+
+<p><strong>{{ student }}, {{ grade }}</strong></p>  
+
+{% if not module_exists %}
+  <br>
+  <p>Module not available. </p>
+  <p>Manually Enter: </p>
+
+  <form method="POST" action="/manual_grade">
+    <button name="grade" value="pass">Pass</button>
+    <button name="grade" value="fail">Fail</button>
+  </form>
+
+{% else %}
+  <a href="/assessment">Start Assessment</a>
+{% endif %}
+
+<br><br>
+<a href="/restart">Restart</a>
+</div>
+</body>
+</html>
