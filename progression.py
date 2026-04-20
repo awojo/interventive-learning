@@ -11,8 +11,10 @@ DB = {
     "password": "wmupassword",
 }
 
+
 def connect():
     return psycopg2.connect(**DB)
+
 
 # Database helpers
 def get_skill_set(conn, code):
@@ -29,6 +31,7 @@ def get_skill_set(conn, code):
             return None
         return {"code": row[0], "prev": row[1], "next": row[2], "desc": row[3]}
 
+
 def get_module(conn, skill_code):
     with conn.cursor() as cur:
         cur.execute(
@@ -43,6 +46,7 @@ def get_module(conn, skill_code):
         )
         return cur.fetchone()
 
+
 def get_assessment_info(conn, skill_code):
     with conn.cursor() as cur:
         cur.execute(
@@ -56,6 +60,7 @@ def get_assessment_info(conn, skill_code):
             (skill_code,),
         )
         return cur.fetchone()
+
 
 def record_result(conn, student_name, skill_code, score, passed):
     with conn.cursor() as cur:
@@ -77,6 +82,7 @@ def record_result(conn, student_name, skill_code, score, passed):
         )
         conn.commit()
 
+
 def get_student_history(conn, student_name):
     with conn.cursor() as cur:
         cur.execute(
@@ -91,7 +97,8 @@ def get_student_history(conn, student_name):
         )
         return cur.fetchall()
 
-# Progression logic 
+
+# Progression logic
 def drop_back(conn, skill, steps=2):
     current = skill
     for _ in range(steps):
@@ -103,6 +110,7 @@ def drop_back(conn, skill, steps=2):
             break
         current = prev_skill
     return current
+
 
 def progress(skill, passed, conn):
     if passed:
@@ -116,13 +124,16 @@ def progress(skill, passed, conn):
             return skill, "remediate_same"
         return dropped, "remediate"
 
+
 # Display helpers
 def print_divider():
     print("\n" + "=" * 60)
 
+
 def grade_label(code):
     grade = code.split(".")[0]
     return "Kindergarten" if grade == "K" else f"Grade {grade}"
+
 
 def print_skill(skill, conn):
     module = get_module(conn, skill["code"])
@@ -160,13 +171,16 @@ def print_history(conn, student_name):
             f"  {skill_code:<20} {score*100:>5.0f}%  {result:<8} {ts.strftime('%H:%M:%S')}"
         )
 
+
 # Main loop
 def run_demo():
     conn = connect()
 
     def debug_db(conn):
         with conn.cursor() as cur:
-            cur.execute("SELECT current_database(), inet_server_addr(), inet_server_port();")
+            cur.execute(
+                "SELECT current_database(), inet_server_addr(), inet_server_port();"
+            )
             print(cur.fetchone())
 
     print_divider()
@@ -195,7 +209,9 @@ def run_demo():
         if score is None:
             print("\n  No assessment for this level yet.")
             try:
-                manual = input("  Enter score manually (0-100) or 'q' to quit: ").strip()
+                manual = input(
+                    "  Enter score manually (0-100) or 'q' to quit: "
+                ).strip()
                 if manual.lower() == "q":
                     break
                 score = min(float(manual), 100) / 100
@@ -216,7 +232,9 @@ def run_demo():
         next_skill, action = progress(current, passed, conn)
 
         if action == "advance":
-            print(f"\n  ADVANCING: {next_skill['code']} ({grade_label(next_skill['code'])})")
+            print(
+                f"\n  ADVANCING: {next_skill['code']} ({grade_label(next_skill['code'])})"
+            )
             current = next_skill
 
         elif action == "top":
@@ -224,7 +242,9 @@ def run_demo():
             break
 
         elif action == "remediate":
-            print(f"\n  DROPPING BACK: {next_skill['code']} ({grade_label(next_skill['code'])})")
+            print(
+                f"\n  DROPPING BACK: {next_skill['code']} ({grade_label(next_skill['code'])})"
+            )
             current = next_skill
 
         elif action == "remediate_same":
@@ -240,6 +260,7 @@ def run_demo():
     print_divider()
 
     conn.close()
+
 
 if __name__ == "__main__":
     try:
