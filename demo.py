@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, session, redirect, url_for
 import psycopg2
 import re
 from datetime import datetime, timezone
+from run_assessment import grade_answer  # ← import the working version
 
 app = Flask(__name__)
 app.secret_key = "ivl-demo"
@@ -54,26 +55,6 @@ def get_questions(conn, skill_code):
             WHERE a.skill_set_code = %s
         """, (skill_code,))
         return cur.fetchall()
-
-def grade_answer(student_answer, correct_answer):
-    def normalize(text):
-        return re.sub(r'[\"\'.,;!?()]+', '', text.lower()).strip()
-
-    student = normalize(student_answer)
-    if not student:
-        return False
-
-    if correct_answer.lower() in ("true", "false"):
-        return normalize(correct_answer) == student or student.startswith(normalize(correct_answer)[0])
-
-    for option in [opt.strip() for opt in correct_answer.split(";")]:
-        for phrase in [normalize(p) for p in option.split(",") if len(p.strip()) > 3]:
-            if phrase and phrase in student:
-                return True
-        if normalize(option) in student:
-            return True
-
-    return False
 
 def drop_back(conn, skill, steps=2):
     current = skill
@@ -193,7 +174,7 @@ def submit():
 
     for qid, ans in session["answers"]:
         student_ans = request.form.get(f"q_{qid}", "")
-        if grade_answer(student_ans, ans):
+        if grade_answer(student_ans, ans):  # ← now uses the imported version
             correct += 1
 
     score = correct / total if total else 1.0
@@ -274,3 +255,4 @@ def restart():
 
 if __name__ == "__main__":
     app.run(debug=True, port=5050)
+    

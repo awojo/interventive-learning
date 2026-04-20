@@ -131,7 +131,7 @@ INSERT INTO skill_sets (skill_set_code, prev_skill_set_code, next_skill_set_code
 ('K.RSLIKI.7', 'K.RSLCS.6', 'K.RSLIKI.9',
  (SELECT proficiency_id FROM proficiencies WHERE proficiency_code = 'K.RSLIKI'),
  'With prompting and support, describe the relationship between illustrations and the story in which they appear (e.g., what moment in a story an illustration depicts).'),
-('K.RSLIKI.9', 'K.RSLIKI.7', 'K.RSLRRLTC.10 ',
+('K.RSLIKI.9', 'K.RSLIKI.7', 'K.RSLRRLTC.10',
  (SELECT proficiency_id FROM proficiencies WHERE proficiency_code = 'K.RSLIKI'),
  'With prompting and support, compare and contrast the adventures and experiences of characters in familiar stories.'),
 ('K.RSLRRLTC.10', 'K.RSLIKI.9', '1.RSLKID.1',
