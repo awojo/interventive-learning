@@ -188,7 +188,7 @@ INSERT INTO skill_sets (skill_set_code, prev_skill_set_code, next_skill_set_code
 ('2.RSLIKI.9', '2.RSLIKI.7', '2.RSLRRLTC.10',
  (SELECT proficiency_id FROM proficiencies WHERE proficiency_code = '2.RSLIKI'),
  'Compare and contrast two or more versions of the same story (e.g., Cinderella stories) by different authors or from different cultures.'),
-('2.RSLRRLTC.10', '1.RSLIKI.9', '3.RSLKID.1',
+('2.RSLRRLTC.10', '2.RSLIKI.9', '3.RSLKID.1',
  (SELECT proficiency_id FROM proficiencies WHERE proficiency_code = '2.RSLRRLTC'),
  'By the end of the year, read and comprehend literature, including stories and poetry, in the grades 2-3 text complexity band proficiently, with scaffolding as needed at the high end of the range.'),
 ('3.RSLKID.1', '2.RSLRRLTC.10', '3.RSLKID.2',
